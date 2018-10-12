@@ -1,1 +1,2 @@
 from directed_hausdorff import directed_hausdorff
+from directed_hausdorff import distance_functions

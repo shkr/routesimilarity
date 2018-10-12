@@ -13,7 +13,7 @@ ctypedef cnp.ndarray ndarray
 
 
 distances_mapping = {"manhattan":1, "euclidean":2, "chebyshev":3, "cosine":4, "geodesic": 5}
-
+distance_functions = distances_mapping.keys()
 
 cdef inline double _manhattan(double[:] x, double[:] y):
 	cdef:
@@ -96,6 +96,6 @@ cdef inline tuple _hausdorff(double[:,:] XA, double[:,:] XB, int dist):
 	return cmax, i_max_min, j_max_min    
 
 
-def directed_hausdorff(double[:,:] XA not None, double[:,:] XB not None, distance="euclidean"):
+def directed_hausdorff(double[:,:] XA not None, double[:,:] XB not None, distance):
 	assert distance in distances_mapping, "distance must be one of the following: " + " ".join(distances_mapping.keys())	
 	return _hausdorff(XA, XB, distances_mapping[distance])
