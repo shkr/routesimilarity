@@ -1,0 +1,4 @@
+global-include *.pyx
+global-include *.c
+include LICENSE
+include README.md

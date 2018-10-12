@@ -1,43 +1,73 @@
-import numpy as np
-from distutils.core import setup
-from distutils.extension import Extension
-from Cython.Build import cythonize
-from Cython.Distutils import build_ext
+from __future__ import absolute_import
+import pkg_resources
+import setuptools
+import setuptools.command.build_ext
+import setuptools.command.test
 
-ext_modules=[Extension("directed_hausdorff", 
-                       ["directed_hausdorff.pyx"], 
-                       libraries=["m"], 
-                       extra_compile_args = ["-O3", "-ffast-math", "-march=native"],
-                       extra_link_args=[])]
-cythonize("directed_hausdorff.pyx")
 
-setup(
+__author__ = 'Shashank Shekhar'
+__version__ = '0.12'
+__email__ = 'shashank.f1@gmail.com'
+__download_url__ = 'https://github.com/shkr/routesimilarity/archive/0.1.tar.gz'
+
+try:
+    import Cython.Build
+    __cython = True
+except ImportError:
+    __cython = False
+
+
+class BuildExtension(setuptools.command.build_ext.build_ext):
+    def build_extensions(self):
+        numpy_includes = pkg_resources.resource_filename("numpy", "core/include")
+
+        for extension in self.extensions:
+            if not hasattr(extension, "include_dirs") or \
+                    (hasattr(extension, "include_dirs") and numpy_includes not in extension.include_dirs):
+                extension.include_dirs.append(numpy_includes)
+
+        setuptools.command.build_ext.build_ext.build_extensions(self)
+
+
+__extensions = [
+    setuptools.Extension(
+        name="routesimilarity.directed_hausdorff",
+        sources=[
+            "routesimilarity/directed_hausdorff.{}".format("pyx" if __cython else "c")
+        ],
+        extra_compile_args = ["-O3", "-ffast-math", "-march=native"]
+    )
+]
+
+if __cython:
+    __extensions = Cython.Build.cythonize(__extensions)
+
+
+setuptools.setup(
   name='routesimilarity',
   packages=['routesimilarity'],
-  version='0.1',
+  version=__version__,
   license='MIT',
   description='Methods for similarity scoring between routes',
-  author='Shashank Shekhar',
-  author_email='shashank.f1@gmail.com',
+  author=__author__,
+  author_email=__email__,
   url='https://github.com/shkr/routesimilarity',
-  download_url='https://github.com/shkr/routesimilarity/archive/v_01.tar.gz',
+  download_url=__download_url__,
   keywords=['route', 'similarity', 'hausdorff'],
   install_requires=[
-    'numpy',
-    'geopy'
+    'geopy',
+    'numpy>=1.15'
    ],
   setup_requires=[
-    'numpy'
+    'cython>=0.28',
+    'numpy>=1.15'
   ],
   classifiers=[
-    '5 - Production/Stable',
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Science/Research',
     'Intended Audience :: Developers',
-    'Topic :: Software Development :: Build Tools',
-    'License :: OSI Approved :: MIT License',
-    'Programming Language :: Python :: 3.2',
-    'Programming Language :: Python :: 2.7'
+    'Programming Language :: Python :: 3'
   ],
-  include_dirs=[np.get_include(), 'include'],
-  cmdclass={"build_ext": build_ext},
-  ext_modules=ext_modules
+  ext_modules=__extensions,
+  cmdclass={"build_ext": BuildExtension}
 )
