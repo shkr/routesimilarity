@@ -6,7 +6,7 @@ import setuptools.command.test
 
 
 __author__ = 'Shashank Shekhar'
-__version__ = '0.12'
+__version__ = '0.13'
 __email__ = 'shashank.f1@gmail.com'
 __download_url__ = 'https://github.com/shkr/routesimilarity/archive/0.1.tar.gz'
 
@@ -42,6 +42,8 @@ __extensions = [
 if __cython:
     __extensions = Cython.Build.cythonize(__extensions)
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 
 setuptools.setup(
   name='routesimilarity',
@@ -49,6 +51,8 @@ setuptools.setup(
   version=__version__,
   license='MIT',
   description='Methods for similarity scoring between routes',
+  long_description=long_description,
+  long_description_content_type="text/markdown",
   author=__author__,
   author_email=__email__,
   url='https://github.com/shkr/routesimilarity',
