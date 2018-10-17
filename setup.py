@@ -6,7 +6,7 @@ import setuptools.command.test
 
 
 __author__ = 'Shashank Shekhar'
-__version__ = '0.13'
+__version__ = '0.14'
 __email__ = 'shashank.f1@gmail.com'
 __download_url__ = 'https://github.com/shkr/routesimilarity/archive/0.1.tar.gz'
 
